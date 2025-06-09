@@ -7,3 +7,4 @@ This project uses a vision system (OpenCV) to detect a red circle object using a
 
 
 
+[PANDA_VISION_PROJECT_MOVEIT2.webm](https://github.com/user-attachments/assets/1cda7dc0-b25b-46c4-9ec7-3d0000e6ec5f)
