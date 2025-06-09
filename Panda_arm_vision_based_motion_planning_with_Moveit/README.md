@@ -1,0 +1,155 @@
+Project: Vision-Based Object Detection and Motion Planning using MoveIt2
+Overview
+This project uses a vision system (OpenCV) to detect a red circle object using a USB camera and publishes its position as a geometry_msgs::msg::PoseStamped. A motion planning node (written in C++) listens to this pose and commands a robotic arm (e.g., Panda or UR5) to move to that location using MoveIt2.
+
+1. Project Structure
+Workspace: ws_moveit/
+
+ws_moveit/
+├── src/
+│   ├── panda_vision/
+│   │   ├── panda_vision/
+│   │   │   └── vision_node.py
+│   │   ├── package.xml
+│   │   └── setup.py
+│   ├── panda_planning/
+│   │   ├── src/
+│   │   │   └── move_to_pose.cpp
+│   │   ├── CMakeLists.txt
+│   │   └── package.xml
+
+
+
+2. Create panda_vision (Python Package)
+Files:
+package.xml:
+
+<package format="3">
+  <name>panda_vision</name>
+  <version>0.0.1</version>
+  <description>Vision node for detecting red objects</description>
+  <maintainer email="you@example.com">Your Name</maintainer>
+  <license>MIT</license>
+
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+</package>
+
+
+SETUP.PY
+from setuptools import setup
+
+package_name = 'panda_vision'
+
+setup(
+    name=package_name,
+    version='0.0.1',
+    packages=[package_name],
+    install_requires=['setuptools'],
+    zip_safe=True,
+    maintainer='yourname',
+    maintainer_email='you@example.com',
+    description='Red circle detection and pose publishing',
+    license='MIT',
+    entry_points={
+        'console_scripts': [
+            'vision_node = panda_vision.vision_node:main',
+        ],
+    },
+)
+
+
+panda_vision/vision_node.py:
+Your existing red circle OpenCV code that publishes PoseStamped.
+
+3. Create panda_planning (C++ Package)
+Files:
+package.xml:
+
+<package format="3">
+  <name>panda_planning</name>
+  <version>0.0.1</version>
+  <description>Planning node using MoveIt2</description>
+  <maintainer email="you@example.com">Your Name</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>rclcpp</depend>
+  <depend>geometry_msgs</depend>
+  <depend>moveit_ros_planning_interface</depend>
+</package>
+
+
+
+
+CMAKELIST.txt
+
+cmake_minimum_required(VERSION 3.8)
+project(panda_planning)
+
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(moveit_ros_planning_interface REQUIRED)
+
+add_executable(move_to_pose src/move_to_pose.cpp)
+ament_target_dependencies(move_to_pose rclcpp geometry_msgs moveit_ros_planning_interface)
+
+install(TARGETS move_to_pose DESTINATION lib/${PROJECT_NAME})
+
+ament_package()
+
+
+src/move_to_pose.cpp:
+Your C++ code updated for the Panda arm (make sure "_arm" matches your robot's MoveIt group name).
+
+
+4. Build Workspace
+cd ~/ws_moveit
+colcon build --packages-select panda_vision panda_planning
+source install/setup.bash
+
+
+cd ~/ws_moveit
+colcon build --packages-select panda_vision panda_planning
+
+source install/setup.bash
+ros2 launch panda_moveit_config demo.launch.py
+
+Start Vision Node:
+ros2 run panda_vision vision_node
+
+Start Planning Node:
+ros2 run panda_planning move_to_pose
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
