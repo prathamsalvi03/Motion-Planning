@@ -1,2 +1,2 @@
 # Motion-Planning
-Motion planning code
+Motion planning for robots
